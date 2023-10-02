@@ -1,0 +1,49 @@
+name: binlog_replication
+services:
+  master:
+    image: mysql:8.0
+    volumes:
+      - type: bind
+        source: ./master/master.conf
+        target: /etc/mysql/conf.d/master.cnf
+      - type: bind
+        source: ./master/login.conf
+        target: /root/.my.cnf
+      - type: bind
+        source: ./master/scripts
+        target: /opt/scripts
+      - type: volume
+        source: mysql_master
+        target: /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-ppassword"]
+      timeout: 30s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: password
+  slave:
+    image: mysql:8.0
+    volumes:
+      - type: bind
+        source: ./slave/slave.conf
+        target: /etc/mysql/conf.d/slave.cnf
+      - type: bind
+        source: ./slave/login.conf
+        target: /root/.my.cnf
+      - type: bind
+        source: ./slave/scripts
+        target: /opt/scripts
+      - type: volume
+        source: mysql_slave
+        target: /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-ppassword"]
+      timeout: 30s
+      retries: 10
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: password
+volumes:
+  mysql_master:
+  mysql_slave:
