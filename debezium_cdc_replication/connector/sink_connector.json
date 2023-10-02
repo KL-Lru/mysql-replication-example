@@ -1,0 +1,16 @@
+{
+  "name": "sink-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:mysql://slave/test",
+    "connection.username": "slave",
+    "connection.password": "slave_password",
+    "insert.mode": "upsert",
+    "delete.enabled": "true",
+    "primary.key.mode": "record_key",
+    "schema.evolution": "basic",
+    "database.time_zone": "UTC",
+    "topics.regex": "dbserver1.test.users"
+  }
+}
