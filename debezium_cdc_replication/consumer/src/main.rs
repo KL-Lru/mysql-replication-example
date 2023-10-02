@@ -10,17 +10,19 @@ struct UserPayloads {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct UserKafkaPayloads {
+    // before: ...
     after: UserPayloads,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct KafkaPayloads {
+    // schema: ...
     payload: UserKafkaPayloads,
 }
 
 #[tokio::main]
 async fn main() {
-    let pool = MySqlPool::connect("mysql://slave:slave_password@localhost:23306/test")
+    let pool = MySqlPool::connect("mysql://slave:slave_password@slave:3306/test")
         .await
         .unwrap();
     sqlx::query("CREATE TABLE IF NOT EXISTS users (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))")
@@ -28,7 +30,7 @@ async fn main() {
         .await
         .unwrap();
 
-    let mut consumer = Consumer::from_hosts(vec!["localhost:9092".to_owned()])
+    let mut consumer = Consumer::from_hosts(vec!["kafka:9092".to_owned()])
         .with_topic("dbserver1.test.users".to_owned())
         .with_fallback_offset(kafka::consumer::FetchOffset::Earliest)
         .with_group("1".to_owned())
@@ -42,14 +44,14 @@ async fn main() {
                 let user: KafkaPayloads = serde_json::from_str(&mes).unwrap();
                 sqlx::query(
                 format!(
-                    "INSERT INTO users (id, name) VALUES ('{}', '{}') ON DUPLICATE KEY UPDATE name = VALUES(name)",
-                    user.payload.after.id, user.payload.after.name
+                        "INSERT INTO users (id, name) VALUES ('{}', '{}') ON DUPLICATE KEY UPDATE name = VALUES(name)",
+                        user.payload.after.id, user.payload.after.name
+                    )
+                    .as_str(),
                 )
-                .as_str(),
-            )
-            .execute(&pool)
-            .await
-            .unwrap();
+                .execute(&pool)
+                .await
+                .unwrap();
                 println!("{:?}", user.payload.after);
             }
             consumer.consume_messageset(ms).unwrap();

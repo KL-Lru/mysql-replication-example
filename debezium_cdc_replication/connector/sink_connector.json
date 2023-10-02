@@ -1,16 +1,20 @@
 {
-  "name": "sink-connector",
+  "name": "slave-connector",
   "config": {
     "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
-    "tasks.max": "1",
-    "connection.url": "jdbc:mysql://slave/test",
+    "connection.url": "jdbc:mysql://slave:3306/test",
     "connection.username": "slave",
     "connection.password": "slave_password",
+    "tasks.max": "1",
     "insert.mode": "upsert",
+    "schema.evolution": "basic",
     "delete.enabled": "true",
     "primary.key.mode": "record_key",
-    "schema.evolution": "basic",
     "database.time_zone": "UTC",
-    "topics.regex": "dbserver1.test.users"
+    "topics": "dbserver1.test.users",
+    "transforms": "route",
+    "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+    "transforms.route.replacement": "$3",
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter"
   }
 }

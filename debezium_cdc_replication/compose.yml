@@ -101,6 +101,18 @@ services:
       test: curl -s -o /dev/null -w "%{http_code}" http://connect:8083/connectors || exit 1
       timeout: 10s
       retries: 10
+  consumer:
+    command: ["cargo", "run"]
+    image: rust:latest
+    volumes:
+      - type: bind
+        source: ./consumer
+        target: /project
+    working_dir: /project
+    tty: true
+    profiles:
+      - consumer
 volumes:
   mysql_master:
   mysql_slave:
+  connect_conf:

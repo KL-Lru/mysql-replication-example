@@ -6,3 +6,13 @@ mysql -uroot -ppassword -v << SQL
 CREATE USER IF NOT EXISTS 'slave'@'%' IDENTIFIED BY 'slave_password';
 GRANT ALL PRIVILEGES ON *.* TO 'slave'@'%';
 SQL
+
+mysql -v << SQL 
+USE test;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+SQL

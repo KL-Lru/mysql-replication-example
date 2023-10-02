@@ -5,10 +5,7 @@ init:
 	./connector/deploy.sh
 
 consume:
-	docker compose exec kafka bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic dbserver1.test.users
-
-replicate:
-	docker compose exec slave bash -c "chmod +x /opt/scripts/*; bash -c /opt/scripts/replication.sh;";
+	docker compose --profile consumer run --rm -it consumer
 
 seed:
 	docker compose up -d --wait
