@@ -23,6 +23,10 @@ binlogベースの場合, MASTERのどのbinlogのどこの地点を開始位置
 
 - MASTERのSTATUS上から現在のbinlogファイルと位置を確認し, それを元にreplicate開始スクリプトを生成
 
+```bash
+make check_replication_point
+```
+
 3. レプリケーションの開始
 
 ```bash
