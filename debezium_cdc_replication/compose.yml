@@ -1,7 +1,7 @@
 name: debezium
 services:
   master:
-    image: mysql:8.0
+    image: mysql:8.0-debian
     volumes:
       - type: bind
         source: ./master/master.conf
@@ -25,7 +25,7 @@ services:
       MYSQL_DATABASE: test
       MYSQL_ROOT_PASSWORD: password
   slave:
-    image: mysql:8.0
+    image: mysql:8.0-debian
     volumes:
       - type: bind
         source: ./slave/slave.conf
