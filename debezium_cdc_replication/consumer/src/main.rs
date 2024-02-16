@@ -7,7 +7,7 @@ use tokio_util::sync::CancellationToken;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct UserPayloads {
-    id: i32,
+    id: String,
     name: String,
 }
 
@@ -24,7 +24,7 @@ struct KafkaPayloads {
 }
 
 async fn kafka_consume(heartbeat: &mut tokio::sync::mpsc::Receiver<()>) {
-    let mut consumer = Consumer::from_hosts(vec!["localhost:9092".to_owned()])
+    let mut consumer = Consumer::from_hosts(vec!["kafka:9092".to_owned()])
         .with_topic("dbserver1.test.users".to_owned())
         .with_fallback_offset(kafka::consumer::FetchOffset::Earliest)
         .with_group("1".to_owned())
